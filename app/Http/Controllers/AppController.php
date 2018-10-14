@@ -6,6 +6,7 @@ use App\File;
 use App\Http\Requests\UploadFileRequest;
 use App\Jobs\ProccessFile;
 use App\Mail\ShutterstockMail;
+use App\Services\MailchimpService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Mailgun\Mailgun;

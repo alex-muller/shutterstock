@@ -3,6 +3,7 @@
   <b-row>
     <b-col>
       <b-jumbotron header="Shutterstock Image Sender" lead="Don't use for spam :)" >
+        <a href="/status">Check Email status</a>
       </b-jumbotron>
     </b-col>
   </b-row>
@@ -17,7 +18,7 @@
       <b-form-group>
         <b-form-file v-model="file" placeholder="Choose a file..."></b-form-file>
       </b-form-group>
-      <b-button @click="uploadEmails" variant="primary">Submit</b-button>
+      <b-button @click="uploadEmails" variant="primary">Upload</b-button>
     </b-col>
   </b-row>
   <b-row class="justify-content-center mt-4">
@@ -27,6 +28,16 @@
       </a>
     </b-col>
   </b-row>
+  <b-modal ref="successModal" title="Success">
+    <p class="my-4">File was uploaded</p>
+    <a href="/status">Check Email status</a>
+  </b-modal>
+  <b-modal ref="errorModal"
+    title="Error"
+    header-bg-variant="danger"
+    header-text-variant="light">
+    <p v-for="(error, i) in errors" :key="i" class="text-danger">{{ error }}</p>
+  </b-modal>
 </b-container>
 </template>
 
@@ -38,12 +49,13 @@ export default {
     return {
       search: '',
       timer: null,
+      errors: [],
       images: [],
       file: null
     }
   },
   created () {
-    this.startSearch()
+
   },
   methods: {
     startSearch () {
@@ -78,6 +90,20 @@ export default {
       };
 
       axios.post('/upload', data, config)
+        .then(() => {
+          this.$refs.successModal.show()
+        })
+        .catch(err => {
+          this.$refs.errorModal.show()
+          this.errors = [];
+
+          for(let error in err.response.data.errors){
+            err.response.data.errors[error].forEach(error => {
+              this.errors.push(error)
+            })
+          }
+
+        })
     },
     getImageIds(){
       let ids = []

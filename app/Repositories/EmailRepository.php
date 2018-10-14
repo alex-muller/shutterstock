@@ -19,4 +19,9 @@ class EmailRepository
         $emailModel->file_id = $fileModel->id;
         $emailModel->save();
     }
+
+    public function getSuccessEmailsByFile(File $file)
+    {
+        return $file->emails()->where('status', true)->get();
+    }
 }

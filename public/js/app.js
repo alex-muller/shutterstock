@@ -53038,6 +53038,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -53046,13 +53057,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     return {
       search: '',
       timer: null,
+      errors: [],
       images: [],
       file: null
     };
   },
-  created: function created() {
-    this.startSearch();
-  },
+  created: function created() {},
 
   methods: {
     startSearch: function startSearch() {
@@ -53079,6 +53089,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       });
     },
     uploadEmails: function uploadEmails() {
+      var _this2 = this;
+
       var data = new FormData();
       data.append('images', this.getImageIds());
       //data.append('_token', token)
@@ -53090,7 +53102,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
       };
 
-      __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/upload', data, config);
+      __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/upload', data, config).then(function () {
+        _this2.$refs.successModal.show();
+      }).catch(function (err) {
+        _this2.$refs.errorModal.show();
+        _this2.errors = [];
+
+        for (var error in err.response.data.errors) {
+          err.response.data.errors[error].forEach(function (error) {
+            _this2.errors.push(error);
+          });
+        }
+      });
     },
     getImageIds: function getImageIds() {
       var ids = [];
@@ -53104,11 +53127,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   watch: {
     search: function search() {
-      var _this2 = this;
+      var _this3 = this;
 
       clearTimeout(this.timer);
       this.timer = setTimeout(function () {
-        _this2.startSearch();
+        _this3.startSearch();
       }, 800);
     }
   }
@@ -54019,12 +54042,20 @@ var render = function() {
           _c(
             "b-col",
             [
-              _c("b-jumbotron", {
-                attrs: {
-                  header: "Shutterstock Image Sender",
-                  lead: "Don't use for spam :)"
-                }
-              })
+              _c(
+                "b-jumbotron",
+                {
+                  attrs: {
+                    header: "Shutterstock Image Sender",
+                    lead: "Don't use for spam :)"
+                  }
+                },
+                [
+                  _c("a", { attrs: { href: "/status" } }, [
+                    _vm._v("Check Email status")
+                  ])
+                ]
+              )
             ],
             1
           )
@@ -54081,7 +54112,7 @@ var render = function() {
                   attrs: { variant: "primary" },
                   on: { click: _vm.uploadEmails }
                 },
-                [_vm._v("Submit")]
+                [_vm._v("Upload")]
               )
             ],
             1
@@ -54122,6 +54153,29 @@ var render = function() {
               )
             ]
           )
+        })
+      ),
+      _vm._v(" "),
+      _c("b-modal", { ref: "successModal", attrs: { title: "Success" } }, [
+        _c("p", { staticClass: "my-4" }, [_vm._v("File was uploaded")]),
+        _vm._v(" "),
+        _c("a", { attrs: { href: "/status" } }, [_vm._v("Check Email status")])
+      ]),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          ref: "errorModal",
+          attrs: {
+            title: "Error",
+            "header-bg-variant": "danger",
+            "header-text-variant": "light"
+          }
+        },
+        _vm._l(_vm.errors, function(error, i) {
+          return _c("p", { key: i, staticClass: "text-danger" }, [
+            _vm._v(_vm._s(error))
+          ])
         })
       )
     ],
@@ -54224,7 +54278,7 @@ exports = module.exports = __webpack_require__(10)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -54237,6 +54291,13 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -54323,114 +54384,146 @@ var render = function() {
     [
       _c(
         "b-container",
-        _vm._l(_vm.files, function(file) {
-          return _c(
-            "div",
-            { key: file.id, staticClass: "mt-5" },
+        [
+          _c(
+            "b-row",
             [
               _c(
-                "b-row",
+                "b-col",
                 [
-                  _c("b-col", [
-                    _c("h3", [
-                      _vm._v("File: "),
-                      _c("span", { staticClass: "text-primary" }, [
-                        _vm._v(_vm._s(file.name))
+                  _c(
+                    "b-jumbotron",
+                    {
+                      attrs: {
+                        header: "Email Status List",
+                        lead: "Don't use for spam :)"
+                      }
+                    },
+                    [
+                      _c("a", { attrs: { href: "/" } }, [
+                        _vm._v("Back to Home Page")
                       ])
-                    ]),
-                    _vm._v(" "),
-                    _c("p", [
-                      _c("strong", [_vm._v("Status:")]),
-                      _vm._v(" "),
-                      file.status
-                        ? _c("span", { staticClass: "text-success" }, [
-                            _vm._v("Processed")
-                          ])
-                        : _c("span", { staticClass: "text-warning" }, [
-                            _vm._v("Not Processed")
-                          ])
-                    ]),
-                    _vm._v(" "),
-                    _c("p", [
-                      _c("strong", [_vm._v("Uploaded:")]),
-                      _vm._v(" " + _vm._s(file.uploaded_at))
-                    ]),
-                    _vm._v(" "),
-                    file.status
-                      ? _c("p", [
-                          _c("strong", [_vm._v("Processed:")]),
-                          _vm._v(" " + _vm._s(file.processed_at))
-                        ])
-                      : _vm._e()
-                  ])
+                    ]
+                  )
                 ],
                 1
-              ),
-              _vm._v(" "),
-              file.status
-                ? _c(
-                    "b-row",
-                    [
-                      _c("b-col", [
-                        _c("table", { staticClass: "table" }, [
-                          _c("thead", [
-                            _c("th", [_vm._v("Email")]),
-                            _vm._v(" "),
-                            _c("th", [_vm._v("Sent")]),
-                            _vm._v(" "),
-                            _c("th", [_vm._v("Status")]),
-                            _vm._v(" "),
-                            _c("th", [_vm._v("Message")])
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "tbody",
-                            _vm._l(file.emails, function(email) {
-                              return _c("tr", { key: email.id }, [
-                                _c("td", [_vm._v(_vm._s(email.email))]),
-                                _vm._v(" "),
-                                _c("td", [_vm._v(_vm._s(email.sent))]),
-                                _vm._v(" "),
-                                _c("td", [
-                                  email.status
-                                    ? _c(
-                                        "span",
-                                        { staticClass: "badge badge-success" },
-                                        [_vm._v("Success")]
-                                      )
-                                    : _c(
-                                        "span",
-                                        { staticClass: "badge badge-danger" },
-                                        [_vm._v("Fail")]
-                                      )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", [
-                                  email.status
-                                    ? _c(
-                                        "span",
-                                        { staticClass: "text-success" },
-                                        [_vm._v(_vm._s(email.status_message))]
-                                      )
-                                    : _c(
-                                        "span",
-                                        { staticClass: "text-danger" },
-                                        [_vm._v(_vm._s(email.status_message))]
-                                      )
-                                ])
-                              ])
-                            })
-                          )
-                        ])
-                      ])
-                    ],
-                    1
-                  )
-                : _vm._e()
+              )
             ],
             1
-          )
-        })
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.files, function(file) {
+            return _c(
+              "div",
+              { key: file.id, staticClass: "mt-5" },
+              [
+                _c(
+                  "b-row",
+                  [
+                    _c("b-col", [
+                      _c("h3", [
+                        _vm._v("File: "),
+                        _c("span", { staticClass: "text-primary" }, [
+                          _vm._v(_vm._s(file.name))
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [
+                        _c("strong", [_vm._v("Status:")]),
+                        _vm._v(" "),
+                        file.status
+                          ? _c("span", { staticClass: "text-success" }, [
+                              _vm._v("Processed")
+                            ])
+                          : _c("span", { staticClass: "text-warning" }, [
+                              _vm._v("Not Processed")
+                            ])
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [
+                        _c("strong", [_vm._v("Uploaded:")]),
+                        _vm._v(" " + _vm._s(file.uploaded_at))
+                      ]),
+                      _vm._v(" "),
+                      file.status
+                        ? _c("p", [
+                            _c("strong", [_vm._v("Processed:")]),
+                            _vm._v(" " + _vm._s(file.processed_at))
+                          ])
+                        : _vm._e()
+                    ])
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                file.status
+                  ? _c(
+                      "b-row",
+                      [
+                        _c("b-col", [
+                          _c("table", { staticClass: "table" }, [
+                            _c("thead", [
+                              _c("th", [_vm._v("Email")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Sent")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Status")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Message")])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(file.emails, function(email) {
+                                return _c("tr", { key: email.id }, [
+                                  _c("td", [_vm._v(_vm._s(email.email))]),
+                                  _vm._v(" "),
+                                  _c("td", [_vm._v(_vm._s(email.sent))]),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    email.status
+                                      ? _c(
+                                          "span",
+                                          {
+                                            staticClass: "badge badge-success"
+                                          },
+                                          [_vm._v("Success")]
+                                        )
+                                      : _c(
+                                          "span",
+                                          { staticClass: "badge badge-danger" },
+                                          [_vm._v("Fail")]
+                                        )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    email.status
+                                      ? _c(
+                                          "span",
+                                          { staticClass: "text-success" },
+                                          [_vm._v(_vm._s(email.status_message))]
+                                        )
+                                      : _c(
+                                          "span",
+                                          { staticClass: "text-danger" },
+                                          [_vm._v(_vm._s(email.status_message))]
+                                        )
+                                  ])
+                                ])
+                              })
+                            )
+                          ])
+                        ])
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ],
+              1
+            )
+          })
+        ],
+        2
       )
     ],
     1

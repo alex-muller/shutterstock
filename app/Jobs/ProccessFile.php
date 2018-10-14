@@ -6,6 +6,7 @@ use App\Email;
 use App\File;
 use App\Repositories\EmailRepository;
 use App\Repositories\FileRepository;
+use App\Services\MailchimpService;
 use App\Services\MailgunService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Http\UploadedFile;
@@ -25,30 +26,28 @@ class ProccessFile implements ShouldQueue
     private $images = [];
     private $mailgunService;
     private $emailRepository;
+    private $mailchimpService;
 
 
     public function __construct(UploadedFile $file, string $images)
     {
         $fileRepository = new FileRepository();
-
         $this->fileModel = $fileRepository->createFile($file);
-
         $this->emails = $this->getEmailList($file);
-
         $this->images = $this->getImages($images);
-
         $this->mailgunService = new MailgunService();
-
         $this->emailRepository = new EmailRepository();
+        $this->mailchimpService = new MailchimpService();
     }
 
     public function handle()
     {
-
         foreach ($this->emails as $email) {
             $result = $this->mailgunService->send($email, $this->images);
             $this->emailRepository->createEmailWithStatusResult($email, $result, $this->fileModel);
         }
+
+        $this->mailchimpService->addMembersToList($this->fileModel);
 
         $this->fileModel->status = true;
         $this->fileModel->save();

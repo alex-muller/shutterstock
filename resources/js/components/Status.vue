@@ -1,6 +1,13 @@
 <template>
   <div>
     <b-container>
+      <b-row>
+        <b-col>
+          <b-jumbotron header="Email Status List" lead="Don't use for spam :)" >
+            <a href="/">Back to Home Page</a>
+          </b-jumbotron>
+        </b-col>
+      </b-row>
       <div v-for="file in files" :key="file.id" class="mt-5">
         <b-row>
           <b-col>

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Email[] $emails
  */
 class File extends Model
 {
