@@ -15,14 +15,16 @@
           placeholder="Start type to search images..."></b-form-input>
       </b-form-group>
       <b-form-group>
-        <b-form-file placeholder="Choose a file..."></b-form-file>
+        <b-form-file v-model="file" placeholder="Choose a file..."></b-form-file>
       </b-form-group>
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button @click="uploadEmails" variant="primary">Submit</b-button>
     </b-col>
   </b-row>
   <b-row class="justify-content-center mt-4">
     <b-col v-for="image in images" :key="image.id"  lg="3" md="3" sm="3" xs="6" class="mb-2">
-      <div class="img-thumbnail img-fluid" :style="{'background-image': 'url('+image.assets.huge_thumb.url+')'}"></div>
+      <a :href="'https://www.shutterstock.com/image/' + image.id" target="_blank">
+        <div class="img-thumbnail img-fluid" :style="{'background-image': 'url('+image.assets.huge_thumb.url+')'}"></div>
+      </a>
     </b-col>
   </b-row>
 </b-container>
@@ -36,7 +38,8 @@ export default {
     return {
       search: '',
       timer: null,
-      images: []
+      images: [],
+      file: null
     }
   },
   created () {
@@ -57,11 +60,33 @@ export default {
         },
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization' : authHeader
         }
       }).then(({data}) => {
         this.images = data.data
       })
+    },
+    uploadEmails () {
+      var data = new FormData();
+      data.append('images', this.getImageIds())
+      //data.append('_token', token)
+      data.append('file', this.file)
+
+      var config = {
+        onUploadProgress: function(progressEvent) {
+          var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
+        }
+      };
+
+      axios.post('/upload', data, config)
+    },
+    getImageIds(){
+      let ids = []
+
+      this.images.forEach((image) => {
+        ids.push(image.id)
+      })
+
+      return ids
     }
   },
   watch: {

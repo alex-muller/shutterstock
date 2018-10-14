@@ -9,12 +9,8 @@
 </head>
 <body>
 <div id="app">
-  <app></app>
+  <status></status>
 </div>
-<script>
-  var shutterKey = '{{ $key }}';
-  var shutterSecret = '{{ $secret }}';
-</script>
 <script src="/js/app.js"></script>
 </body>
 </html>

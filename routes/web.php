@@ -12,3 +12,6 @@
 */
 
 Route::get('/', 'AppController@index');
+Route::get('/status', 'StatusController@index');
+Route::get('/status/get', 'StatusController@getStatus');
+Route::post('/upload', 'AppController@upload');

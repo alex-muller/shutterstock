@@ -3,7 +3,9 @@ require('./bootstrap')
 window.Vue = require('vue')
 
 import App from './components/App'
-import axios from 'axios'
+import Status from './components/Status'
+
+window.token = document.head.querySelector('meta[name="csrf-token"]').content;
 
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
@@ -18,6 +20,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
  */
 
 Vue.component('app', App)
+Vue.component('status', Status)
 
 const app = new Vue({
   el: '#app'
