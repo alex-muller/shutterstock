@@ -9,4 +9,6 @@ copy `.env.example` to `.env` and configure db connection
 
 `php artisan key:generate`
 
+`php artisan queue:work`
+
 `php artisan serve`
